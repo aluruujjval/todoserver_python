@@ -5,6 +5,7 @@ from django.views.generic import View
 from django.http import JsonResponse
 from pymongo import MongoClient
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
 import json
 from .models import TodoModel
 from .models import Todo
@@ -12,6 +13,7 @@ from datetime import datetime
 from .DAO.TodoMongoDBDAO import TodoMongoDBDAO
 from .DAO.AbstractTodoDAO import AbstractTodoDao
 import dateutil.parser
+from datetime import datetime
 # Create your views here.
 class TodoViews:
 
@@ -114,4 +116,55 @@ class SomeNewView(View):
         return JsonResponse(resp)
 
         
+class MyCrudViews:
+    @csrf_exempt
+    @require_http_methods(["POST"])
+    def saveNewTODO(myreq):
+        print(myreq.body.decode('utf-8'))
+        requestDict = {}
+        requestDict.update(json.loads(myreq.body.decode('utf-8')))
+        todo = TodoModel()
+        if len(requestDict) > 0:
+            if "title" in requestDict:
+                    todo.title=requestDict["title"]
+            if "desc" in requestDict:
+                    todo.description=requestDict["desc"]
+            if "due" in requestDict:
+                    todo.dueDate=datetime.strptime(requestDict["due"],"%Y-%m-%d %H:%M:%S %z")
+            todo.save()
+        return JsonResponse({'STATUS':'SUCCESS'})
+    @csrf_exempt
+    @require_http_methods(["GET"])
+    def getTODOS(request, title = "hey"):
+        print("hey")
+        
+        print(title)
+        todos = TodoModel.objects.filter(title__startswith=title)
 
+        response = {}
+        response["todos"] = []
+        for todo in todos:
+            print(todo.dueDate)
+            new_resp = {"title":todo.title,"description":todo.description}
+            response["todos"].append(new_resp)
+        
+        return JsonResponse(response)
+    
+
+
+
+        
+
+
+        
+"""
+
+curl -H "Content-Type: application/json" -X POST -d '{"title":"learn Django","desc":"I wanna learn django","due":"2018-04-02 14:10:10 +0530"}' http://127.0.0.1:8000/todos/insertTodo/
+
+curl -H "Content-Type: application/json" -X POST -d '{"title":"teach Django","desc":"I wanna teach django","due":"2018-04-02 14:10:10 +0530"}' http://127.0.0.1:8000/todos/insertTodo/
+
+
+
+
+curl -H "Content-Ty -X GET http://127.0.0.1:8000/todos/getTodos/title-teach
+"""
