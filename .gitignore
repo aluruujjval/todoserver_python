@@ -1,0 +1,4 @@
+*.sqlite3
+*.whl
+*/__pycache__
+*/.vscode
