@@ -83,7 +83,7 @@ DATABASES = {
     #    'ENGINE': 'django.db.backends.postgresql',
      #   'NAME':' spring_hibernate',
       #  'USER': 'postgres_ujjval',
-       #  'PASSWORD': 'uj',
+       
         #'HOST': '127.0.0.1',
         #'PORT': '5432',        
     #}
