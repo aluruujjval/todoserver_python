@@ -167,4 +167,14 @@ curl -H "Content-Type: application/json" -X POST -d '{"title":"teach Django","de
 
 
 curl -H "Content-Ty -X GET http://127.0.0.1:8000/todos/getTodos/title-teach
+
+ var req = new XMLHttpRequest();
+        req.open('POST',url);
+        req.setRequestHeader("Content-Type","application/json");
+        req.onload = function(){
+            if(req.status == 200){
+                success(JSON.parse(req.response));
+            }
+        }
+        req.send(JSON.stringify(jsonData));
 """
